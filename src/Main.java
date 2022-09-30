@@ -44,7 +44,7 @@ public class Main {
      */
     public static void printExhausedList(Location loc)
     {
-
+        System.out.println(exhausted.get(convertLocToIndex(loc)).toString());
     }
 
     /*
@@ -85,11 +85,7 @@ public class Main {
      */
     public static void initExhausted()
     {
-        for(ArrayList<Location> y: exhausted){
-            for(Location x:y){
-                
-            }
-        }
+        exhausted = new ArrayList<ArrayList<Location>>(64);
     }
 
     /*
@@ -97,6 +93,7 @@ public class Main {
      */
     public static boolean inExhausted(Location source, Location dest)
     {
+
         return false;
     }
 
@@ -138,6 +135,18 @@ public class Main {
      */
     public static ArrayList<Location> getPossibleMoves(Location loc)
     {
+        ArrayList<Location> possible = new ArrayList<>();
+        int[] xToMove = { 2, 1, -1, -2, -2, -1, 1, 2 };
+        int[] yToMove = { 1, 2, 2, 1, -1, -2, -2, -1 };
+        for(int i =0; i<8; i++){
+            Location p = new Location(loc.getRow()+xToMove[i],loc.getCol()+yToMove[i]);
+            if(isValid(p)) {
+                if(stack.search(p) == -1) possible.add(p);
+            }
+        }
+        if(possible.size() >0){
+            return possible;
+        }
         return null;
     }
 
