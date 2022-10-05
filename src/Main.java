@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 
@@ -32,7 +33,8 @@ public class Main {
         board[startLoc.getRow()][startLoc.getCol()] = 1;
         while(stack.size() != rowL * colL && stack.size() != 0)
         {
-
+            currentPossible = getPossibleMoves(stack.lastElement());
+            
 
         }
 
@@ -52,7 +54,10 @@ public class Main {
      */
     public static void printPossibleMoveLocations(Location loc)
     {
-
+        ArrayList<Location> x = getPossibleMoves(loc);
+        for(Location p : x){
+            System.out.print(p.toString() + " ");
+        }
     }
 
     /*
@@ -60,7 +65,12 @@ public class Main {
      */
     public static void printBoard()
     {
-
+        for(int[] x : board){
+            for(int y : x){
+                System.out.print(y + " ");
+            }
+            System.out.println();
+        }
     }
 
     /*
@@ -77,7 +87,7 @@ public class Main {
      */
     public static void clearExhausted(Location loc)
     {
-
+        exhausted.get(convertLocToIndex(loc)).clear();
     }
 
     /*
@@ -93,8 +103,7 @@ public class Main {
      */
     public static boolean inExhausted(Location source, Location dest)
     {
-
-        return false;
+        return exhausted.get(convertLocToIndex(source)).contains(dest);
     }
 
     /*
@@ -102,6 +111,13 @@ public class Main {
      */
     public static Location getNextMove(Location loc, ArrayList<Location> list)
     {
+        for(Location p :list){
+            if(!inExhausted(loc,p)){
+                stack.push(loc);
+                board[loc.getRow()][loc.getCol()] = stack.size();
+                return p;
+            }
+        }
         return null;
     }
 
@@ -118,7 +134,7 @@ public class Main {
      */
     public static void addToExhausted(Location source, Location dest)
     {
-
+        exhausted.get(convertLocToIndex(source)).add(dest);
     }
 
     /*
@@ -141,7 +157,7 @@ public class Main {
         for(int i =0; i<8; i++){
             Location p = new Location(loc.getRow()+xToMove[i],loc.getCol()+yToMove[i]);
             if(isValid(p)) {
-                if(stack.search(p) == -1) possible.add(p);
+                possible.add(p);
             }
         }
         if(possible.size() >0){
@@ -156,7 +172,12 @@ public class Main {
      */
     public static void obtainStartLoc()
     {
-
+        Scanner input = new Scanner(System.in);
+        System.out.print("Row: ");
+        int row = input.nextInt();
+        System.out.print("Col: ");
+        int col = input.nextInt();
+        startLoc = new Location(row,col);
     }
 
 }
