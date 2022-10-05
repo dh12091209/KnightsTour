@@ -31,11 +31,26 @@ public class Main {
         stack.push(startLoc);
 //        visited[startLoc.getRow()][startLoc.getCol()] = true;
         board[startLoc.getRow()][startLoc.getCol()] = 1;
+        Location currentPosition = startLoc;
         while(stack.size() != rowL * colL && stack.size() != 0)
         {
-            currentPossible = getPossibleMoves(stack.lastElement());
-            
+            currentPossible = getPossibleMoves(currentPosition);
+            System.out.println("running");
+            if(currentPossible.size() > 0){
+                stack.push(getNextMove(currentPosition,currentPossible));
+                addToExhausted(currentPosition,stack.lastElement());
+                currentPosition = stack.lastElement();
+                board[currentPosition.getRow()][currentPosition.getCol()] = stack.size();
 
+
+            }else{
+                clearExhausted(currentPosition);
+                board[currentPosition.getRow()][currentPosition.getCol()] = 0;
+                stack.pop();
+                currentPosition = stack.lastElement();
+
+            }
+            printBoard();
         }
 
 
@@ -103,6 +118,7 @@ public class Main {
      */
     public static boolean inExhausted(Location source, Location dest)
     {
+        System.out.println(exhausted.size());
         return exhausted.get(convertLocToIndex(source)).contains(dest);
     }
 
@@ -114,7 +130,6 @@ public class Main {
         for(Location p :list){
             if(!inExhausted(loc,p)){
                 stack.push(loc);
-                board[loc.getRow()][loc.getCol()] = stack.size();
                 return p;
             }
         }
