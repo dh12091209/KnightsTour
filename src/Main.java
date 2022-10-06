@@ -34,12 +34,15 @@ public class Main {
         Location currentPosition = startLoc;
         while(stack.size() != rowL * colL && stack.size() != 0)
         {
+            printPossibleMoveLocations(currentPosition);
             currentPossible = getPossibleMoves(currentPosition);
-            System.out.println("running");
             if(currentPossible.size() > 0){
                 stack.push(getNextMove(currentPosition,currentPossible));
                 addToExhausted(currentPosition,stack.lastElement());
                 currentPosition = stack.lastElement();
+                for(int i =0; i<stack.size();i++){
+                    System.out.println(stack.get(i).toString());
+                }
                 board[currentPosition.getRow()][currentPosition.getCol()] = stack.size();
 
 
@@ -110,7 +113,9 @@ public class Main {
      */
     public static void initExhausted()
     {
-        exhausted = new ArrayList<ArrayList<Location>>(64);
+        for(int i = 0; i<rowL*colL; i++){
+            exhausted.add(new ArrayList<Location>());
+        }
     }
 
     /*
@@ -118,7 +123,6 @@ public class Main {
      */
     public static boolean inExhausted(Location source, Location dest)
     {
-        System.out.println(exhausted.size());
         return exhausted.get(convertLocToIndex(source)).contains(dest);
     }
 
