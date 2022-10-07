@@ -31,32 +31,47 @@ public class Main {
         stack.push(startLoc);
 //        visited[startLoc.getRow()][startLoc.getCol()] = true;
         board[startLoc.getRow()][startLoc.getCol()] = 1;
-        Location currentPosition = startLoc;
+
         while(stack.size() != rowL * colL && stack.size() != 0)
         {
-            printPossibleMoveLocations(currentPosition);
-            currentPossible = getPossibleMoves(currentPosition);
-            if(currentPossible.size() > 0){
-                stack.push(getNextMove(currentPosition,currentPossible));
-                addToExhausted(currentPosition,stack.lastElement());
-                currentPosition = stack.lastElement();
-                for(int i =0; i<stack.size();i++){
-                    System.out.println(stack.get(i).toString());
-                }
-                board[currentPosition.getRow()][currentPosition.getCol()] = stack.size();
-
-
-            }else{
-                clearExhausted(currentPosition);
-                board[currentPosition.getRow()][currentPosition.getCol()] = 0;
+//            printPossibleMoveLocations(currentPosition);
+//            currentPossible = getPossibleMoves(currentPosition);
+//            if(currentPossible.size() > 0){
+//                stack.push(getNextMove(currentPosition,currentPossible));
+//                System.out.println("printing check pushed");
+//                addToExhausted(currentPosition,stack.lastElement());
+//                currentPosition = stack.lastElement();
+//                for(int i =0; i<stack.size();i++){
+//                    System.out.println(stack.get(i).toString());
+//                }
+//                board[currentPosition.getRow()][currentPosition.getCol()] = stack.size();
+//
+//
+//            }else{
+//                clearExhausted(currentPosition);
+//                board[currentPosition.getRow()][currentPosition.getCol()] = 0;
+//                stack.pop();
+//                currentPosition = stack.lastElement();
+//
+//            }
+            printPossibleMoveLocations(startLoc);
+            currentPossible = getPossibleMoves(startLoc);
+            if(getNextMove(startLoc,currentPossible)!=null){
+                exhausted.get(convertLocToIndex(stack.lastElement())).add(getNextMove(stack.lastElement(),currentPossible));
+                startLoc=getNextMove(stack.lastElement(),currentPossible);
+                printExhausedList(stack.lastElement());
+                stack.push(startLoc);
+                board[startLoc.getRow()][startLoc.getCol()] = stack.size();
+            } else{
+                board[startLoc.getRow()][startLoc.getCol()] =0;
                 stack.pop();
-                currentPosition = stack.lastElement();
-
+                clearExhausted(startLoc);
+                System.out.println("It is startLoc: "+startLoc.toString());
+                startLoc = stack.lastElement();
+                System.out.println("It is startLoc: "+startLoc.toString());
             }
             printBoard();
         }
-
-
     }
 
     /*
@@ -73,9 +88,14 @@ public class Main {
     public static void printPossibleMoveLocations(Location loc)
     {
         ArrayList<Location> x = getPossibleMoves(loc);
+        if(x == null) {
+            printExhausedList(loc);
+            return;
+        }
         for(Location p : x){
             System.out.print(p.toString() + " ");
         }
+        System.out.println();
     }
 
     /*
@@ -131,10 +151,12 @@ public class Main {
      */
     public static Location getNextMove(Location loc, ArrayList<Location> list)
     {
-        for(Location p :list){
-            if(!inExhausted(loc,p)){
-                stack.push(loc);
-                return p;
+        if(list != null){
+            for(Location p :list){
+                if(!inExhausted(loc,p)){
+                    System.out.println("getNextMove: " + p.toString());
+                    return p;
+                }
             }
         }
         return null;
@@ -176,7 +198,7 @@ public class Main {
         for(int i =0; i<8; i++){
             Location p = new Location(loc.getRow()+xToMove[i],loc.getCol()+yToMove[i]);
             if(isValid(p)) {
-                possible.add(p);
+                if(board[p.getRow()][p.getCol()] == 0) possible.add(p); // if location of board has 0.
             }
         }
         if(possible.size() >0){
