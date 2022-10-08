@@ -34,44 +34,21 @@ public class Main {
 
         while(stack.size() != rowL * colL && stack.size() != 0)
         {
-//            printPossibleMoveLocations(currentPosition);
-//            currentPossible = getPossibleMoves(currentPosition);
-//            if(currentPossible.size() > 0){
-//                stack.push(getNextMove(currentPosition,currentPossible));
-//                System.out.println("printing check pushed");
-//                addToExhausted(currentPosition,stack.lastElement());
-//                currentPosition = stack.lastElement();
-//                for(int i =0; i<stack.size();i++){
-//                    System.out.println(stack.get(i).toString());
-//                }
-//                board[currentPosition.getRow()][currentPosition.getCol()] = stack.size();
-//
-//
-//            }else{
-//                clearExhausted(currentPosition);
-//                board[currentPosition.getRow()][currentPosition.getCol()] = 0;
-//                stack.pop();
-//                currentPosition = stack.lastElement();
-//
-//            }
-            printPossibleMoveLocations(startLoc);
+
             currentPossible = getPossibleMoves(startLoc);
             if(getNextMove(startLoc,currentPossible)!=null){
-                exhausted.get(convertLocToIndex(stack.lastElement())).add(getNextMove(stack.lastElement(),currentPossible));
                 startLoc=getNextMove(stack.lastElement(),currentPossible);
-                printExhausedList(stack.lastElement());
+                exhausted.get(convertLocToIndex(stack.lastElement())).add(getNextMove(stack.lastElement(),currentPossible));
                 stack.push(startLoc);
                 board[startLoc.getRow()][startLoc.getCol()] = stack.size();
             } else{
                 board[startLoc.getRow()][startLoc.getCol()] =0;
                 stack.pop();
                 clearExhausted(startLoc);
-                System.out.println("It is startLoc: "+startLoc.toString());
                 startLoc = stack.lastElement();
-                System.out.println("It is startLoc: "+startLoc.toString());
             }
-            printBoard();
         }
+        printBoard();
     }
 
     /*
@@ -109,6 +86,7 @@ public class Main {
             }
             System.out.println();
         }
+        System.out.println("---------------");
     }
 
     /*
@@ -143,7 +121,10 @@ public class Main {
      */
     public static boolean inExhausted(Location source, Location dest)
     {
-        return exhausted.get(convertLocToIndex(source)).contains(dest);
+        for(Location x:exhausted.get(convertLocToIndex(source))){
+            if(x.getRow() == dest.getRow() && x.getCol() == dest.getCol()) return true;
+        }
+        return false;
     }
 
     /*
@@ -154,7 +135,6 @@ public class Main {
         if(list != null){
             for(Location p :list){
                 if(!inExhausted(loc,p)){
-                    System.out.println("getNextMove: " + p.toString());
                     return p;
                 }
             }
