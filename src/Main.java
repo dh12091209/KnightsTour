@@ -45,7 +45,7 @@ public class Main {
                 board[startLoc.getRow()][startLoc.getCol()] =0;
                 stack.pop();
                 clearExhausted(startLoc);
-                startLoc = stack.lastElement();
+                if (!stack.isEmpty()) startLoc = stack.lastElement();
             }
         }
         printBoard();
@@ -184,7 +184,7 @@ public class Main {
         if(possible.size() >0){
             return possible;
         }
-        return null;
+        return possible;
     }
 
 
